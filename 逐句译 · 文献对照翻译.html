@@ -1,0 +1,340 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>逐句译 · 文献对照翻译</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* 布局：顶部工具条 + 拖放区；正文是一张两栏对照表，左原文右译文，句号做行，页码做分隔。 */
+:root{
+  --bg:#f3f5f7; --paper:#ffffff; --ink:#16212b; --muted:#5d6b78; --line:#d9dfe5;
+  --accent:#1f4e79; --accent-soft:#e3ecf5; --warn:#a4491f; --ok:#2c6e55;
+  --wash1:rgba(31,78,121,.16); --wash2:rgba(44,110,105,.13); --wash3:rgba(120,140,190,.12); --grid:rgba(22,33,43,.045); --shadow:rgba(22,33,43,.08);
+  --ui:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --en:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --zh:"Noto Serif SC","Songti SC","SimSun",serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#10161c; --paper:#18212a; --ink:#e4eaf0; --muted:#93a1ae; --line:#2b3742;
+  --accent:#8fbbe6; --accent-soft:#1f3347; --warn:#e79a6f; --ok:#7fc9a8;
+  --wash1:rgba(88,140,200,.20); --wash2:rgba(60,150,140,.14); --wash3:rgba(110,100,190,.13); --grid:rgba(228,234,240,.035); --shadow:rgba(0,0,0,.35); color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#10161c; --paper:#18212a; --ink:#e4eaf0; --muted:#93a1ae; --line:#2b3742;
+  --accent:#8fbbe6; --accent-soft:#1f3347; --warn:#e79a6f; --ok:#7fc9a8;
+  --wash1:rgba(88,140,200,.20); --wash2:rgba(60,150,140,.14); --wash3:rgba(110,100,190,.13); --grid:rgba(228,234,240,.035); --shadow:rgba(0,0,0,.35); color-scheme:dark }
+
+html{background:var(--bg)}
+body{min-height:100vh;color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.6;
+  background:
+    radial-gradient(60vw 46vh at 8% -6%, var(--wash1), transparent 70%),
+    radial-gradient(52vw 44vh at 100% 4%, var(--wash2), transparent 68%),
+    radial-gradient(70vw 50vh at 60% 108%, var(--wash3), transparent 70%),
+    repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 28px),
+    var(--bg);
+  background-attachment:fixed}
+.sheet,.drop{box-shadow:0 1px 2px var(--shadow),0 12px 32px -18px var(--shadow)}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:20px 64px;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
+h1{margin:0;font-family:var(--zh);font-weight:600;font-size:26px;letter-spacing:.04em}
+header p{margin:0;color:var(--muted)}
+
+.drop{border:1.5px dashed var(--line);background:var(--paper);border-radius:6px;padding:22px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;cursor:pointer;transition:border-color .15s,background .15s}
+.drop:hover,.drop.over,.drop:focus-visible{border-color:var(--accent);background:var(--accent-soft);outline:none}
+.drop strong{font-size:16px;font-weight:500}
+.drop span{color:var(--muted);font-size:13px}
+.drop .grow{flex:1 1 260px;min-width:0;display:flex;flex-direction:column}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 78%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);padding:8px 12px;border-radius:6px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;border-bottom:1px solid var(--line)}
+.bar .info{flex:1 1 220px;min-width:0;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.bar .info b{color:var(--ink);font-weight:500}
+button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:6px 14px;border-radius:4px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--paper);font-weight:500}
+button:disabled{opacity:.5;cursor:default}
+.meter{height:3px;background:var(--line);border-radius:2px;overflow:hidden;flex:1 1 100%}
+.meter i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.msg{font-size:13px;color:var(--warn);flex:1 1 100%}
+
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.pg{padding:6px 16px;font-size:12px;letter-spacing:.12em;color:var(--muted);background:var(--bg);border-block:1px solid var(--line);font-variant-numeric:tabular-nums}
+.pg:first-child{border-top:0}
+.row{display:grid;grid-template-columns:3.2em minmax(0,1fr) minmax(0,1fr);gap:0 18px;padding:12px 16px 12px 8px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row:hover{background:var(--accent-soft)}
+.n{text-align:right;color:var(--muted);font-size:12px;padding-top:4px;font-variant-numeric:tabular-nums}
+.en{font-family:var(--en);font-size:16px;line-height:1.55;overflow-wrap:anywhere}
+.zh{font-family:var(--zh);font-size:16px;line-height:1.8;overflow-wrap:anywhere}
+.zh.wait{color:var(--muted);font-family:var(--ui);font-size:13px}
+.zh.fail{color:var(--warn);font-family:var(--ui);font-size:13px}
+.sheet.only .row{grid-template-columns:3.2em minmax(0,1fr)}
+.sheet.only .en{display:none}
+.tag{display:inline-block;font-size:12px;color:var(--accent);background:var(--accent-soft);padding:1px 8px;border-radius:3px;margin-left:8px;letter-spacing:.05em}
+@media (max-width:720px){
+  .row{grid-template-columns:2.4em minmax(0,1fr);row-gap:6px}
+  .row .zh{grid-column:2}
+  .en{font-size:15px;color:var(--muted)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>逐句译</h1>
+    <p>把英文 PDF 文献拆成句子，一句原文对一句中文。</p>
+  </header>
+
+  <div class="drop" id="drop" tabindex="0" role="button" aria-label="选择 PDF 文件">
+    <div class="grow">
+      <strong>把 PDF 拖到这里，或点击选择文件</strong>
+      <span>文件只在你的浏览器里解析；句子文本会发给 Claude 翻译。扫描版（图片型）PDF 没有文字层，无法提取。</span>
+    </div>
+    <button type="button" id="pick">选择 PDF</button>
+    <input type="file" id="file" accept="application/pdf,.pdf" hidden>
+  </div>
+
+  <div class="bar">
+    <div class="info" id="info"></div>
+    <button type="button" class="primary" id="go">翻译全文</button>
+    <button type="button" id="stop" hidden>停止</button>
+    <button type="button" id="view">仅看译文</button>
+    <button type="button" id="copy">复制译文</button>
+    <div class="meter"><i id="meter"></i></div>
+    <div class="msg" id="msg" hidden></div>
+  </div>
+
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const sheet = $('sheet'), info = $('info'), msg = $('msg');
+
+/* 示例：自拟的一小段，用来展示效果 */
+const SAMPLE = [
+  ["Standardization is often described as the enemy of creativity.", "标准化常被说成是创造力的敌人。"],
+  ["Yet the evidence from organizational studies is less one-sided than this claim suggests.", "然而，组织研究提供的证据并不像这一说法所暗示的那样一边倒。"],
+  ["Shared procedures reduce the cost of coordination, which frees attention for problems that have no routine answer.", "共同的程序降低了协调成本，从而把注意力腾出来，用于处理那些没有常规答案的问题。"],
+  ["What standards change is not the amount of creative work but the kind that gets noticed and rewarded.", "标准改变的不是创造性工作的数量，而是哪一类创造性工作会被看见、被奖励。"]
+];
+
+let S = { name: '', sents: [], sample: true, running: false, stop: false };
+
+function loadSample(){
+  S = { name: '示例段落', sample: true, running: false, stop: false,
+        sents: SAMPLE.map(([en, zh]) => ({ en, zh, page: 1, st: 'done' })) };
+  render();
+}
+
+function say(t){ msg.hidden = !t; msg.textContent = t || ''; }
+
+function render(){
+  sheet.textContent = '';
+  let page = 0;
+  S.sents.forEach((s, i) => {
+    if (s.page !== page){
+      page = s.page;
+      const d = document.createElement('div'); d.className = 'pg';
+      d.textContent = S.sample ? '示例 · 放入你的 PDF 后这里会换成正文' : '第 ' + page + ' 页';
+      sheet.appendChild(d);
+    }
+    const r = document.createElement('div'); r.className = 'row';
+    const n = document.createElement('div'); n.className = 'n'; n.textContent = i + 1;
+    const en = document.createElement('div'); en.className = 'en'; en.lang = 'en'; en.textContent = s.en;
+    const zh = document.createElement('div'); zh.id = 'z' + i;
+    r.append(n, en, zh); sheet.appendChild(r);
+    paint(i);
+  });
+  status();
+}
+
+function paint(i){
+  const s = S.sents[i], el = $('z' + i); if (!el) return;
+  el.className = 'zh' + (s.st === 'done' ? '' : s.st === 'fail' ? ' fail' : ' wait');
+  el.textContent = s.st === 'done' ? s.zh : s.st === 'busy' ? '翻译中…' : s.st === 'fail' ? '这一句没翻成，点“继续翻译”重试' : '待翻译';
+}
+
+function status(){
+  const total = S.sents.length, done = S.sents.filter(s => s.st === 'done').length;
+  info.innerHTML = '';
+  const b = document.createElement('b'); b.textContent = S.name; info.append(b);
+  info.append(' · 共 ' + total + ' 句，已译 ' + done + ' 句');
+  $('meter').style.width = total ? (done / total * 100) + '%' : '0';
+  $('go').hidden = S.running; $('stop').hidden = !S.running;
+  $('go').disabled = S.sample || done === total;
+  $('go').textContent = done && done < total ? '继续翻译' : '翻译全文';
+  $('copy').disabled = !done;
+}
+
+/* ---------- PDF 文字提取 ---------- */
+async function readPdf(file){
+  say('');
+  if (!window.pdfjsLib){ say('PDF 解析组件没加载出来，请刷新页面再试。'); return; }
+  info.textContent = '正在读取 ' + file.name + ' …';
+  try{
+    const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+    let text = ''; const starts = [];
+    for (let p = 1; p <= pdf.numPages; p++){
+      const tc = await (await pdf.getPage(p)).getTextContent();
+      starts.push(text.length);
+      for (const it of tc.items){
+        text += it.str;
+        if (it.hasEOL){
+          if (/[A-Za-z]-$/.test(text)) text = text.slice(0, -1);   // 行尾连字符：把断开的单词接回去
+          else text += ' ';
+        }
+      }
+      text += ' ';
+      info.textContent = '正在读取 ' + file.name + ' … 第 ' + p + ' / ' + pdf.numPages + ' 页';
+    }
+    if (text.replace(/\s/g, '').length < 20){
+      say('这份 PDF 里没有可提取的文字，多半是扫描版。请先用 OCR 工具转成文字版再放进来。');
+      status(); return;
+    }
+    const sents = []; let pos = 0, pg = 0;
+    for (const piece of splitSentences(text)){
+      const at = text.indexOf(piece.slice(0, 12), pos);
+      if (at >= 0) pos = at;
+      while (pg + 1 < starts.length && starts[pg + 1] <= pos) pg++;
+      sents.push({ en: piece, zh: '', page: pg + 1, st: 'todo' });
+      pos += piece.length;
+    }
+    S = { name: file.name, sents, sample: false, running: false, stop: false };
+    render();
+    window.scrollTo({ top: 0 });
+  }catch(e){
+    say('这个文件打不开：' + (e && e.message || e) + '。请确认它是没有加密的 PDF。');
+    status();
+  }
+}
+
+const ABBR = /(?:\b(?:et al|Figs?|Eqs?|e\.g|i\.e|vs|cf|Dr|Mr|Mrs|Ms|Prof|Nos?|Vol|pp?|ca|approx|Refs?|Tab|Sec|St|Inc|Ltd|Co|Ch|Jr|Sr)\.|\b[A-Z]\.)$/;
+function splitSentences(text){
+  const raw = text.replace(/\s+/g, ' ').trim()
+    .split(/(?<=[.!?]["'”’)\]]?)\s+(?=["'“‘(\[]?[A-Z0-9])/);
+  const out = [];
+  for (const p of raw){
+    if (out.length && ABBR.test(out[out.length - 1])) out[out.length - 1] += ' ' + p;
+    else out.push(p);
+  }
+  return out.filter(s => s.trim());
+}
+
+/* ---------- 翻译 ---------- */
+let sampler;
+async function getSampler(){
+  if (sampler === undefined) sampler = window.claude && window.claude.use ? await window.claude.use('sample') : null;
+  return sampler;
+}
+
+function prompt(idx){
+  const ctx = S.sents.slice(Math.max(0, idx[0] - 2), idx[0]).map(s => s.en).join(' ');
+  return '你是学术文献翻译。把下面编号的句子逐句翻译成简体中文。\n' +
+    '要求：忠实原文，不遗漏、不合并、不拆分、不加解释；学术术语用通行译法；人名、公式、变量、引用编号保持原样；' +
+    '如果某一项只是页眉、页码或残缺片段，也照字面译出。\n' +
+    '只输出一个 JSON 数组，长度恰好为 ' + idx.length + '，第 k 个元素是第 k 句的译文字符串，不要输出别的内容。\n\n' +
+    (ctx ? '上文（仅供理解，不要翻译）：' + ctx + '\n\n' : '') +
+    idx.map((i, k) => (k + 1) + '. ' + S.sents[i].en).join('\n');
+}
+
+function parseArr(t, n){
+  const a = t.indexOf('['), b = t.lastIndexOf(']');
+  if (a < 0 || b < a) return null;
+  try{ const v = JSON.parse(t.slice(a, b + 1)); return Array.isArray(v) && v.length === n ? v.map(String) : null; }
+  catch(e){ return null; }
+}
+
+async function ask(sample, idx){
+  for (let tries = 0; ; tries++){
+    try{ return (await sample(prompt(idx), { cache: false })).text; }
+    catch(e){
+      if (e && e.code === 'rate_limited' && tries < 2 && !S.stop){ say('请求太快，稍等 20 秒后自动继续…'); await new Promise(r => setTimeout(r, 20000)); say(''); continue; }
+      throw e;
+    }
+  }
+}
+
+async function doBatch(sample, idx){
+  idx.forEach(i => { S.sents[i].st = 'busy'; paint(i); });
+  let out = parseArr(await ask(sample, idx), idx.length);
+  if (!out && idx.length > 1){            // 数量对不上：这一批改成一句一句翻
+    out = [];
+    for (const i of idx){
+      if (S.stop){ out.push(null); continue; }
+      const one = parseArr(await ask(sample, [i]), 1);
+      out.push(one ? one[0] : null);
+    }
+  }
+  idx.forEach((i, k) => {
+    const z = out && out[k];
+    S.sents[i].zh = z || ''; S.sents[i].st = z ? 'done' : 'fail'; paint(i);
+  });
+  status();
+}
+
+async function run(){
+  const sample = await getSampler();
+  if (!sample){ say('这里暂时调用不了翻译。请登录 claude.ai 后打开本页，并在弹出的提示里允许页面使用 Claude。'); return; }
+  const batches = []; let cur = [], len = 0;
+  S.sents.forEach((s, i) => {
+    if (s.st === 'done') return;
+    s.st = 'todo';
+    if (cur.length >= 10 || len + s.en.length > 1800){ batches.push(cur); cur = []; len = 0; }
+    cur.push(i); len += s.en.length;
+  });
+  if (cur.length) batches.push(cur);
+  S.running = true; S.stop = false; say(''); status();
+  const doc = S;
+  const worker = async () => {
+    while (batches.length && !doc.stop && S === doc){
+      const b = batches.shift();
+      try{ await doBatch(sample, b); }
+      catch(e){
+        b.forEach(i => { doc.sents[i].st = 'todo'; if (S === doc) paint(i); });
+        doc.stop = true;
+        say(e && e.code === 'not_granted' ? '你没有允许页面使用 Claude，所以无法翻译。重新打开页面后可以再选一次。'
+          : e && e.code === 'rate_limited' ? '已达到使用频率上限。过一会儿点“继续翻译”，会从没翻完的地方接着来。'
+          : '翻译中断了：' + (e && e.message || '未知原因') + '。点“继续翻译”可以接着来。');
+      }
+    }
+  };
+  await Promise.all([worker(), worker()]);
+  doc.running = false;
+  doc.sents.forEach((s, i) => { if (s.st === 'busy'){ s.st = 'todo'; if (S === doc) paint(i); } });
+  if (S === doc) status();
+}
+
+/* ---------- 交互 ---------- */
+const fileInput = $('file'), drop = $('drop');
+function take(f){
+  if (!f) return;
+  if (S.running){ say('正在翻译，先点“停止”再换文件。'); return; }
+  if (f.type !== 'application/pdf' && !/\.pdf$/i.test(f.name)){ say('请放入 PDF 文件。'); return; }
+  readPdf(f);
+}
+drop.addEventListener('click', () => fileInput.click());
+drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); fileInput.click(); } });
+$('pick').addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
+fileInput.addEventListener('change', () => { take(fileInput.files[0]); fileInput.value = ''; });
+window.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+window.addEventListener('dragleave', e => { if (!e.relatedTarget) drop.classList.remove('over'); });
+window.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); take(e.dataTransfer.files[0]); });
+
+$('go').addEventListener('click', run);
+$('stop').addEventListener('click', () => { S.stop = true; say('已停止，正在收尾当前这几句…'); });
+$('view').addEventListener('click', () => {
+  const only = sheet.classList.toggle('only');
+  $('view').textContent = only ? '原文对照' : '仅看译文';
+});
+$('copy').addEventListener('click', async () => {
+  const both = !sheet.classList.contains('only');
+  const t = S.sents.filter(s => s.st === 'done').map(s => both ? s.en + '\n' + s.zh : s.zh).join(both ? '\n\n' : '\n');
+  try{ await navigator.clipboard.writeText(t); $('copy').textContent = '已复制'; }
+  catch(e){ const r = document.createRange(); r.selectNodeContents(sheet); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); $('copy').textContent = '已选中，请按 Ctrl/⌘+C'; }
+  setTimeout(() => $('copy').textContent = '复制译文', 2000);
+});
+
+loadSample();
+</script>
+
+</body></html>
